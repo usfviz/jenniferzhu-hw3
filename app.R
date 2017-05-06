@@ -7,7 +7,8 @@ data <- read.csv("Facebook_metrics/dataset_Facebook.csv", sep = ";")
 
 server <- function(input, output)  {
   output$plot1 <- renderPlotly({
-    df <- data[c("share", "Type", "Lifetime.Post.Consumptions", "Lifetime.Post.Total.Impressions")]
+    df <- data[c("Post.Month", "share", "Type", "Lifetime.Post.Consumptions", "Lifetime.Post.Total.Impressions")]
+    df <- df[df$Post.Month == input$month, ]
     p <- ggplot(df, aes(Lifetime.Post.Total.Impressions, Lifetime.Post.Consumptions, 
                         size = share, fill = Type,
                         text = paste('</br> Type: ', Type, 
@@ -36,6 +37,12 @@ server <- function(input, output)  {
 
 
 ui <- fluidPage(
+  sliderInput("month", 
+              "Post Month for Bubble Chart", 
+              min = 1, 
+              max = 12, 
+              value = 1),
+  
   mainPanel(
     tabsetPanel(
       tabPanel(title = "Bubble Chart", plotlyOutput("plot1", width = 800, height = 600)),
